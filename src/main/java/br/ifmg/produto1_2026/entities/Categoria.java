@@ -20,6 +20,10 @@ public class Categoria {
         this.nome = nome;
     }
 
+    public Categoria(long l, String notebook) {
+        this.nome = notebook;
+    }
+
     public Long getId() {
         return id;
     }
