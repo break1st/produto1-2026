@@ -8,12 +8,16 @@ public class StandartError extends RuntimeException {
     private Integer status;
     private String error;
     private String path;
+    private String message;
 
-    public StandartError(Instant timestamp, Integer status, String error, String path) {
+    public StandartError() {}
+
+    public StandartError(Instant timestamp, Integer status,String message, String error, String path) {
         this.timestamp = timestamp;
         this.status = status;
         this.error = error;
         this.path = path;
+        this.message = message;
     }
 
     public Instant getTimestamp() {
@@ -46,5 +50,13 @@ public class StandartError extends RuntimeException {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

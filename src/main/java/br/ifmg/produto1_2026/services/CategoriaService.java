@@ -3,13 +3,15 @@ package br.ifmg.produto1_2026.services;
 import br.ifmg.produto1_2026.dto.CategoriaDTO;
 import br.ifmg.produto1_2026.entities.Categoria;
 import br.ifmg.produto1_2026.repositories.CategoriaRepository;
+import br.ifmg.produto1_2026.services.exceptions.ErroNoBancoDeDados;
 import br.ifmg.produto1_2026.services.exceptions.ResourceNotFound;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,4 +34,37 @@ public class CategoriaService {
              .collect(Collectors.toList());
     }
 
+    @Transactional
+    public CategoriaDTO insert(CategoriaDTO dto) {
+        Categoria categoria = new Categoria();
+        categoria.setNome(dto.getNome());
+        categoria = categoriaRepository.save(categoria);
+        return new CategoriaDTO(categoria);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if(!categoriaRepository.existsById(id)){
+            throw new ResourceNotFound("Categoria não encontrada");
+        }
+
+        try {
+            categoriaRepository.deleteById(id);
+        }
+        catch(DataIntegrityViolationException e) {
+            throw new ErroNoBancoDeDados(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public CategoriaDTO update(Long id, CategoriaDTO dto) {
+        if(!categoriaRepository.existsById(id)){
+            throw new ResourceNotFound("Categoria não encontrada");
+        }
+
+        Categoria categoria = categoriaRepository.getReferenceById(id);
+        categoria.setNome(dto.getNome());
+        categoria = categoriaRepository.save(categoria);
+        return new CategoriaDTO(categoria);
+    }
 }

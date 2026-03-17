@@ -1,8 +1,8 @@
 package br.ifmg.produto1_2026.entities;
 
-
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -12,6 +12,8 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private Instant criadoEm;
+    private Instant atualizadoEm;
 
     public Categoria() {}
 
@@ -40,6 +42,22 @@ public class Categoria {
         this.nome = nome;
     }
 
+    public Instant getCriadoEm() {
+        return criadoEm;
+    }
+
+    public void setCriadoEm(Instant criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
+    public Instant getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(Instant atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -58,5 +76,15 @@ public class Categoria {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 '}';
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.criadoEm = Instant.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = Instant.now();
     }
 }

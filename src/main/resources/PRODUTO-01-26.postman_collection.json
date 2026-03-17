@@ -10,6 +10,32 @@
 			"name": "Categorias",
 			"item": [
 				{
+					"name": "Criar categoria",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Nova Categoria\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/categoria",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categoria"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Listar categorias",
 					"request": {
 						"method": "GET",
@@ -30,6 +56,63 @@
 					"name": "Buscar categoria por ID",
 					"request": {
 						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categoria/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categoria",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar categoria",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Categoria atualizada\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/categoria/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categoria",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar categoria",
+					"request": {
+						"method": "DELETE",
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/categoria/:id",
