@@ -21,9 +21,9 @@ public class Produto {
 
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant updated_at;
+    private Instant atualizadoEm;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant created_at;
+    private Instant criadoEm;
 
     public Produto(Long id, String nome, String descricao, Double preco, String imgUrl) {
         this.id = id;
@@ -31,7 +31,7 @@ public class Produto {
         this.descricao = descricao;
         this.preco = preco;
         this.imgUrl = imgUrl;
-        this.created_at = Instant.now();
+        this.criadoEm = Instant.now();
     }
 
     public Produto(){}
@@ -76,18 +76,18 @@ public class Produto {
         this.imgUrl = imgUrl;
     }
 
-    public Instant getUpdatedAt() { return updated_at; }
+    public Instant getAtualizadoEm() { return atualizadoEm; }
 
-    public Instant getCreatedAt() { return created_at; }
+    public Instant getCriadoEm() { return criadoEm; }
 
     @PrePersist
     public void prePersist() {
-        this.created_at = Instant.now();
+        this.criadoEm = Instant.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updated_at = Instant.now();
+        this.atualizadoEm = Instant.now();
     }
 
     @Override
@@ -98,8 +98,8 @@ public class Produto {
                 ", descricao='" + descricao + '\'' +
                 ", preco=" + preco +
                 ", imgUrl='" + imgUrl + '\'' +
-                ", updated_at=" + updated_at +
-                ", created_at=" + created_at +
+                ", atualizadoEm=" + atualizadoEm +
+                ", criadoEm=" + criadoEm +
                 '}';
     }
 
@@ -107,11 +107,11 @@ public class Produto {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Produto Produto = (Produto) o;
-        return Objects.equals(id, Produto.id) && Objects.equals(nome, Produto.nome) && Objects.equals(descricao, Produto.descricao) && Objects.equals(preco, Produto.preco) && Objects.equals(imgUrl, Produto.imgUrl) && Objects.equals(updated_at, Produto.updated_at) && Objects.equals(created_at, Produto.created_at);
+        return Objects.equals(id, Produto.id) && Objects.equals(nome, Produto.nome) && Objects.equals(descricao, Produto.descricao) && Objects.equals(preco, Produto.preco) && Objects.equals(imgUrl, Produto.imgUrl) && Objects.equals(atualizadoEm, Produto.atualizadoEm) && Objects.equals(criadoEm, Produto.criadoEm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nome, descricao, preco, imgUrl, updated_at, created_at);
+        return Objects.hash(id, nome, descricao, preco, imgUrl, atualizadoEm, criadoEm);
     }
 }
