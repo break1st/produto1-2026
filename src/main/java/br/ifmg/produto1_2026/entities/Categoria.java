@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_categoria")
@@ -14,6 +15,9 @@ public class Categoria {
     private String nome;
     private Instant criadoEm;
     private Instant atualizadoEm;
+
+    @ManyToMany(mappedBy = "categorias")
+    private Set<Produto>  produtos;
 
     public Categoria() {}
 
@@ -56,6 +60,14 @@ public class Categoria {
 
     public void setAtualizadoEm(Instant atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
+    }
+
+    public Set<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(Set<Produto> produtos) {
+        this.produtos = produtos;
     }
 
     @Override

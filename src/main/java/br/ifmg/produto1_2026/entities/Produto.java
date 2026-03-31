@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_produto")
@@ -24,6 +25,14 @@ public class Produto {
     private Instant atualizadoEm;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant criadoEm;
+
+    @ManyToMany
+    @JoinTable(
+            name = "tb_produto_categoria",
+            joinColumns = @JoinColumn(name = "id_produto"),
+            inverseJoinColumns = @JoinColumn(name = "id_categoria")
+    )
+    private Set<Categoria> categorias;
 
     public Produto(Long id, String nome, String descricao, Double preco, String imgUrl) {
         this.id = id;
@@ -79,6 +88,14 @@ public class Produto {
     public Instant getAtualizadoEm() { return atualizadoEm; }
 
     public Instant getCriadoEm() { return criadoEm; }
+
+    public Set<Categoria> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(Set<Categoria> categorias) {
+        this.categorias = categorias;
+    }
 
     @PrePersist
     public void prePersist() {

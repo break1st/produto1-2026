@@ -5,7 +5,6 @@ import br.ifmg.produto1_2026.entities.Produto;
 public class ProdutoDTO {
 
     private Long id;
-
     private String nome;
     private String descricao;
     private Double preco;
@@ -21,12 +20,12 @@ public class ProdutoDTO {
 
     public ProdutoDTO(){}
 
-    public ProdutoDTO(Produto Produto) {
-        this.id = Produto.getId();
-        this.nome = Produto.getNome();
-        this.descricao = Produto.getDescricao();
-        this.preco = Produto.getPreco();
-        this.imgUrl = Produto.getImgUrl();
+    public ProdutoDTO(Produto produto) {
+        this.id = produto.getId();
+        this.nome = produto.getNome();
+        this.descricao = produto.getDescricao();
+        this.preco = produto.getPreco();
+        this.imgUrl = produto.getImgUrl();
     }
 
     public Long getId() {

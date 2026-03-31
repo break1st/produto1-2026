@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_usuario")
@@ -21,6 +22,14 @@ public class Usuario {
     private Instant criadoEm = Instant.now();
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant atualizadoEm = Instant.now();
+
+    @ManyToMany
+    @JoinTable(
+            name="tb_usuario_perfil",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_perfil")
+    )
+    private Set<Perfil> perfis;
 
     public Usuario() {
     }
@@ -61,6 +70,14 @@ public class Usuario {
 
     public Instant getAtualizadoEm() {
         return atualizadoEm;
+    }
+
+    public Set<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(Set<Perfil> perfis) {
+        this.perfis = perfis;
     }
 
     public void setId(long id) {
