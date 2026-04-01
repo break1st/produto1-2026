@@ -1,7 +1,10 @@
 package br.ifmg.produto1_2026.services;
 
+import br.ifmg.produto1_2026.dto.CategoriaDTO;
 import br.ifmg.produto1_2026.dto.ProdutoDTO;
+import br.ifmg.produto1_2026.entities.Categoria;
 import br.ifmg.produto1_2026.entities.Produto;
+import br.ifmg.produto1_2026.repositories.CategoriaRepository;
 import br.ifmg.produto1_2026.repositories.ProdutoRepository;
 import br.ifmg.produto1_2026.services.exceptions.ErroNoBancoDeDados;
 import br.ifmg.produto1_2026.services.exceptions.ResourceNotFound;
@@ -17,6 +20,9 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
     public ProdutoDTO findById(Long id) {
@@ -37,6 +43,12 @@ public class ProdutoService {
         produto.setDescricao(dto.getDescricao());
         produto.setImgUrl(dto.getImgUrl());
         produto.setPreco(dto.getPreco());
+
+        for(CategoriaDTO categoriaDto: dto.getCategorias()){
+            Categoria category = categoriaRepository.getReferenceById(categoriaDto.getId());
+            produto.getCategorias().add(category);
+        }
+
         produto = produtoRepository.save(produto);
         return new ProdutoDTO(produto);
     }

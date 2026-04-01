@@ -1,7 +1,10 @@
 package br.ifmg.produto1_2026.services;
 
+import br.ifmg.produto1_2026.dto.PerfilDTO;
 import br.ifmg.produto1_2026.dto.UsuarioDTO;
+import br.ifmg.produto1_2026.entities.Perfil;
 import br.ifmg.produto1_2026.entities.Usuario;
+import br.ifmg.produto1_2026.repositories.PerfilRepository;
 import br.ifmg.produto1_2026.repositories.UsuarioRepository;
 import br.ifmg.produto1_2026.services.exceptions.ErroNoBancoDeDados;
 import br.ifmg.produto1_2026.services.exceptions.ResourceNotFound;
@@ -18,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PerfilRepository perfilRepository;
 
     @Transactional(readOnly = true)
     public UsuarioDTO findById(Long id) {
@@ -38,6 +44,12 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setSenha(dto.getSenha());
         usuario.setTelefone(dto.getTelefone());
+
+        for(PerfilDTO perfilDto: dto.getPerfis()){
+            Perfil perfil = perfilRepository.getReferenceById(perfilDto.getId());
+            usuario.getPerfis().add(perfil);
+        }
+
         usuario = usuarioRepository.save(usuario);
         return new UsuarioDTO(usuario);
     }

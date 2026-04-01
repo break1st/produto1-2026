@@ -1,15 +1,15 @@
 package br.ifmg.produto1_2026.dto;
 
-import br.ifmg.produto1_2026.entities.Categoria;
+import br.ifmg.produto1_2026.entities.Perfil;
 
 public class PerfilDTO {
 
     private long id;
     private String nome;
 
-    public PerfilDTO(Categoria categoria) {
-        this.id = categoria.getId();
-        this.nome = categoria.getNome();
+    public PerfilDTO(Perfil perfil) {
+        this.id = perfil.getId();
+        this.nome = perfil.getNome();
     }
 
     public PerfilDTO() {}
