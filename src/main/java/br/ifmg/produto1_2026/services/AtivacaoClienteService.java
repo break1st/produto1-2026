@@ -4,19 +4,38 @@ import br.ifmg.produto1_2026.entities.Usuario;
 import br.ifmg.produto1_2026.utils.Notificador;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AtivacaoClienteService {
 
-    private Notificador notificador;
+    //@Autowired   <--- essa é uma forma de injetar o bean (forma 1)
+    //private Notificador notificador;
 
-    public AtivacaoClienteService(Notificador notificador) {
+    private List<Notificador> notificadores;
+
+
+    //forma (2)  no construtor inserir o bean como parâmetro
+    @Autowired  //(forma 3)  quando existe overload de construtores
+    public AtivacaoClienteService(List<Notificador> notificadores) {
         System.out.println("Iniciando AtivacaoClienteService");
+        this.notificadores = notificadores;
+    }
+
+    public AtivacaoClienteService() {
+        System.out.println(
+                "Iniciando AtivacaoClienteService com o construtor sem parâmetro");
     }
 
     public void notificar(Usuario usuario, String mensagem) {
-        notificador.notificar(usuario, mensagem);
+        //if (notificador != null)
+        //  notificador.notificar(usuario, mensagem);
+        for (Notificador notificador : notificadores) {
+            notificador.notificar(usuario, mensagem);
+        }
     }
 
     @PostConstruct
@@ -28,4 +47,17 @@ public class AtivacaoClienteService {
     public void destroy() {
         System.out.println("Metodo executado ao destruir o construtor");
     }
+
+    /*
+    public Notificador getNotificador() {
+        return notificador;
+    }
+
+    //@Autowired  (forma 4) - indicamos a injenção do objeto no
+    //metodo set.
+    public void setNotificador(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+*/
 }
