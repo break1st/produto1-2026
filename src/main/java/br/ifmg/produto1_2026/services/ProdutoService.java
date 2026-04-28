@@ -6,14 +6,22 @@ import br.ifmg.produto1_2026.entities.Categoria;
 import br.ifmg.produto1_2026.entities.Produto;
 import br.ifmg.produto1_2026.repositories.CategoriaRepository;
 import br.ifmg.produto1_2026.repositories.ProdutoRepository;
+import br.ifmg.produto1_2026.resources.ProdutoResource;
 import br.ifmg.produto1_2026.services.exceptions.ErroNoBancoDeDados;
 import br.ifmg.produto1_2026.services.exceptions.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ProdutoService {
@@ -26,31 +34,46 @@ public class ProdutoService {
 
     @Transactional(readOnly = true)
     public ProdutoDTO findById(Long id) {
-        return produtoRepository.findById(id).map(ProdutoDTO::new)
-                .orElseThrow(() -> new ResourceNotFound("Produto não encontrada"));
+        Optional<Produto> opt = produtoRepository.findById(id);
+        Produto produto = opt.orElseThrow(() -> new ResourceNotFound("Produto não encontrado."));
+
+        ProdutoDTO dto = new ProdutoDTO(produto);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+
+        return dto
+                .add(linkTo(methodOn(ProdutoResource.class).findById(produto.getId())).withSelfRel())
+                .add(linkTo(methodOn(ProdutoResource.class).findAll(pageable)).withRel("Todos os produtos"))
+                .add(linkTo(methodOn(ProdutoResource.class).update(produto.getId(), dto)).withRel("Atualizar o produto"))
+                .add(linkTo(methodOn(ProdutoResource.class).delete(produto.getId())).withRel("Apagar o produto"));
     }
 
     @Transactional(readOnly = true)
-    public Page<ProdutoDTO> findAll(Pageable pageable) {
-        return produtoRepository.findAll(pageable)
-                .map(ProdutoDTO::new);
+    public Page<ProdutoDTO> findAll(Pageable pageRequest) {
+        Page<Produto> produtos = produtoRepository.findAll(pageRequest);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+
+        return produtos.map(p -> new ProdutoDTO(p)
+                .add(linkTo(methodOn(ProdutoResource.class).findAll(pageable)).withSelfRel())
+                .add(linkTo(methodOn(ProdutoResource.class).findById(p.getId())).withRel("Obter produto pelo ID"))
+        );
     }
 
     @Transactional
     public ProdutoDTO insert(ProdutoDTO dto) {
         Produto produto = new Produto();
-        produto.setNome(dto.getNome());
-        produto.setDescricao(dto.getDescricao());
-        produto.setImgUrl(dto.getImgUrl());
-        produto.setPreco(dto.getPreco());
+        coptDtoToEntity(dto, produto);
 
-        for(CategoriaDTO categoriaDto: dto.getCategorias()){
-            Categoria category = categoriaRepository.getReferenceById(categoriaDto.getId());
-            produto.getCategorias().add(category);
-        }
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
 
         produto = produtoRepository.save(produto);
-        return new ProdutoDTO(produto);
+
+        return new ProdutoDTO(produto)
+                .add(linkTo(methodOn(ProdutoResource.class).insert(dto)).withSelfRel())
+                .add(linkTo(methodOn(ProdutoResource.class).findById(produto.getId())).withRel("Busca pelo ID") )
+                .add(linkTo(methodOn(ProdutoResource.class).findAll(pageable)).withRel("Todos os produtos") )
+                .add(linkTo(methodOn(ProdutoResource.class).update(produto.getId(), dto)).withRel("Atualizar o produto") )
+                .add(linkTo(methodOn(ProdutoResource.class).delete(produto.getId())).withRel("Apagar o produto"));
     }
 
     @Transactional
@@ -74,11 +97,28 @@ public class ProdutoService {
         }
 
         Produto produto = produtoRepository.getReferenceById(id);
-        produto.setNome(dto.getNome());
-        produto.setDescricao(dto.getDescricao());
-        produto.setImgUrl(dto.getImgUrl());
-        produto.setPreco(dto.getPreco());
+        coptDtoToEntity(dto, produto);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+
         produto = produtoRepository.save(produto);
-        return new ProdutoDTO(produto);
+
+        return new ProdutoDTO(produto)
+                .add(linkTo(methodOn(ProdutoResource.class).update(id, dto)).withSelfRel())
+                .add(linkTo(methodOn(ProdutoResource.class).findById(id)).withRel("Busca pelo ID"))
+                .add(linkTo(methodOn(ProdutoResource.class).findAll(pageable)).withRel("Todos os produtos"))
+                .add(linkTo(methodOn(ProdutoResource.class).delete(id)).withRel("Apagar o produto"));
+    }
+
+    private void coptDtoToEntity(ProdutoDTO dto, Produto entity) {
+        entity.setNome(dto.getNome());
+        entity.setDescricao(dto.getDescricao());
+        entity.setPreco(dto.getPreco());
+        entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategorias().clear();
+        for (CategoriaDTO catDto : dto.getCategorias()){
+            Categoria cat = categoriaRepository.getReferenceById(catDto.getId());
+            entity.getCategorias().add(cat);
+        }
     }
 }

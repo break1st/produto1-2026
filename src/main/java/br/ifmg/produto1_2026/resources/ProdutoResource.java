@@ -87,7 +87,20 @@ public class ProdutoResource {
         return ResponseEntity.created(location).body(categoria);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value="/{id}", produces = "application/json")
+    @Operation(
+            summary = "Endpoint para atualizar um produto",
+            description = "A plataforma precisa disponibilibiar um cadastro e produtos....",
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200"),
+                    @ApiResponse(description = "Requisição mal-feita", responseCode = "400", content = {}),
+                    @ApiResponse(description = "Não autorizado", responseCode = "401"),
+                    @ApiResponse(description = "Proibido no seu perfil", responseCode = "403"),
+                    @ApiResponse(description = "Não encontrado", responseCode = "404"),
+                    @ApiResponse(description = "Erro ao processar", responseCode = "422"),
+                    @ApiResponse(description = "Erro interno no servidor", responseCode = "500"),
+            }
+    )
     public ResponseEntity<ProdutoDTO> update(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
         ProdutoDTO categoria = produtoService.update(id, dto);
         URI location = ServletUriComponentsBuilder
@@ -100,6 +113,19 @@ public class ProdutoResource {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Endpoint para apagar um produto",
+            description = "A plataforma precisa disponibilibiar um cadastro e produtos....",
+            responses = {
+                    @ApiResponse(description = "Sucesso", responseCode = "204"),
+                    @ApiResponse(description = "Requisição mal-feita", responseCode = "400", content = {}),
+                    @ApiResponse(description = "Não autorizado", responseCode = "401"),
+                    @ApiResponse(description = "Proibido no seu perfil", responseCode = "403"),
+                    @ApiResponse(description = "Não encontrado", responseCode = "404"),
+                    @ApiResponse(description = "Erro ao processar", responseCode = "422"),
+                    @ApiResponse(description = "Erro interno no servidor", responseCode = "500"),
+            }
+    )
     public ResponseEntity<ProdutoDTO> delete(@PathVariable Long id){
         produtoService.delete(id);
         return ResponseEntity.noContent().build();
