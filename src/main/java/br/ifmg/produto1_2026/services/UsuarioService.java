@@ -2,6 +2,7 @@ package br.ifmg.produto1_2026.services;
 
 import br.ifmg.produto1_2026.dto.PerfilDTO;
 import br.ifmg.produto1_2026.dto.UsuarioDTO;
+import br.ifmg.produto1_2026.dto.UsuarioInsertDTO;
 import br.ifmg.produto1_2026.entities.Perfil;
 import br.ifmg.produto1_2026.entities.Usuario;
 import br.ifmg.produto1_2026.repositories.PerfilRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,9 @@ public class UsuarioService {
 
     @Autowired
     private PerfilRepository perfilRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
     public UsuarioDTO findById(Long id) {
@@ -38,17 +43,10 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioDTO insert(UsuarioDTO dto) {
+    public UsuarioDTO insert(UsuarioInsertDTO dto) {
         Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setEmail(dto.getEmail());
-        usuario.setSenha(dto.getSenha());
-        usuario.setTelefone(dto.getTelefone());
-
-        for(PerfilDTO perfilDto: dto.getPerfis()){
-            Perfil perfil = perfilRepository.getReferenceById(perfilDto.getId());
-            usuario.getPerfis().add(perfil);
-        }
+        copyDtoToEntity(dto, usuario);
+        usuario.setSenha(encoder.encode(dto.getSenha()));
 
         usuario = usuarioRepository.save(usuario);
         return new UsuarioDTO(usuario);
@@ -75,11 +73,23 @@ public class UsuarioService {
         }
 
         Usuario usuario = usuarioRepository.getReferenceById(id);
-        usuario.setNome(dto.getNome());
-        usuario.setEmail(dto.getEmail());
-        usuario.setSenha(dto.getSenha());
-        usuario.setTelefone(dto.getTelefone());
+        copyDtoToEntity(dto, usuario);
         usuario = usuarioRepository.save(usuario);
         return new UsuarioDTO(usuario);
+    }
+
+    private void copyDtoToEntity(UsuarioDTO dto, Usuario entity) {
+        entity.setNome(dto.getNome());
+        entity.setEmail(dto.getEmail());
+        entity.setTelefone(dto.getTelefone());
+
+        entity.getPerfis().clear();
+        for (PerfilDTO perfilDto: dto.getPerfis()){
+
+            Perfil perfil =
+                    perfilRepository
+                            .getReferenceById(perfilDto.getId());
+            entity.getPerfis().add(perfil);
+        }
     }
 }

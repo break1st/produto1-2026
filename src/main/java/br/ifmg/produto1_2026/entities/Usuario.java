@@ -23,7 +23,7 @@ public class Usuario {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant atualizadoEm = Instant.now();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="tb_usuario_perfil",
             joinColumns = @JoinColumn(name = "id_usuario"),
@@ -99,6 +99,15 @@ public class Usuario {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public void addRole(Perfil perfil){
+        this.perfis.add(perfil);
+    }
+
+    public boolean hasRole(Perfil perfil){
+        return this.perfis.contains(perfil);
+    }
+
     @PrePersist
     public void prePersist() {
         this.criadoEm = Instant.now();
