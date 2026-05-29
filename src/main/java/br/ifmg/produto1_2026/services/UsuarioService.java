@@ -92,7 +92,18 @@ public class UsuarioService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        return new Usuario();
+        Usuario usuario = new Usuario();
+        usuario.setSenha(dados.getFirst().getPassword());
+        usuario.setEmail(dados.getFirst().getUsername());
+        for (UserDetailsProjection dado: dados) {
+            usuario.addRole(
+                    new Perfil(dado.getRoleId(),
+                            dado.getAuthority()
+                    )
+            );
+        }
+
+        return usuario;
     }
 
     private void copyDtoToEntity(UsuarioDTO dto, Usuario entity) {
