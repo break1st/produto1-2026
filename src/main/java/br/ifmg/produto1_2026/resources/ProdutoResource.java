@@ -7,6 +7,7 @@ import br.ifmg.produto1_2026.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +77,7 @@ public class ProdutoResource {
                     @ApiResponse(description = "Erro interno no servidor", responseCode = "500"),
             }
     )
-    public ResponseEntity<ProdutoDTO> insert(@RequestBody ProdutoDTO dto){
+    public ResponseEntity<ProdutoDTO> insert(@RequestBody @Valid ProdutoDTO dto){
         ProdutoDTO categoria = produtoService.insert(dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

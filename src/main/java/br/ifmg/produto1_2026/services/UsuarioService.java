@@ -5,6 +5,7 @@ import br.ifmg.produto1_2026.dto.UsuarioDTO;
 import br.ifmg.produto1_2026.dto.UsuarioInsertDTO;
 import br.ifmg.produto1_2026.entities.Perfil;
 import br.ifmg.produto1_2026.entities.Usuario;
+import br.ifmg.produto1_2026.projections.UserDetailsProjection;
 import br.ifmg.produto1_2026.repositories.PerfilRepository;
 import br.ifmg.produto1_2026.repositories.UsuarioRepository;
 import br.ifmg.produto1_2026.services.exceptions.ErroNoBancoDeDados;
@@ -13,13 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -76,6 +82,17 @@ public class UsuarioService {
         copyDtoToEntity(dto, usuario);
         usuario = usuarioRepository.save(usuario);
         return new UsuarioDTO(usuario);
+    }
+
+    // 18 - avançando com o spring security
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> dados = usuarioRepository.loadUserByUsername(username);
+        if (dados.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
+
+        return new Usuario();
     }
 
     private void copyDtoToEntity(UsuarioDTO dto, Usuario entity) {

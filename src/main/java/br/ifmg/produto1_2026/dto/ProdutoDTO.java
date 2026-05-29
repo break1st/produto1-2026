@@ -2,6 +2,7 @@ package br.ifmg.produto1_2026.dto;
 
 import br.ifmg.produto1_2026.entities.Produto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.hateoas.RepresentationModel;
@@ -21,6 +22,7 @@ public class ProdutoDTO extends RepresentationModel<ProdutoDTO> {
     @Schema(description = "valor em reais do produto")
     @Positive(message = "O preço do produto deve ser positivo")
     private Double preco;
+    @NotNull
     @Schema(description = "endereço eletrônico da imagem")
     private String imgUrl;
 
